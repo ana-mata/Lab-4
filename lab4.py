@@ -125,84 +125,116 @@ def SearchAndPrint(T,k):
         
 ###################################### START OF MY CODE ######################################
 
+#Extract the items in the B-tree into a sorted list.
 def btreeToList(T,A):
     if T.isLeaf:
         for i in range(len(T.item)):
             A.append(T.item[i])
     else:   
         for i in range(len(T.item)):
-            print(i)
-            btreeToList(T.child[i],A)           
+            #append the left part
+            btreeToList(T.child[i],A)
+            #append the parent
             A.append(T.item[i])
+        #append the right
         btreeToList(T.child[len(T.item)],A) 
-    return L
+    return A
 
+#Return the minimum element in the tree at a given depth d
 def MinAtDepth(T,d):
-    if d>height(T) :
+    #check that the depth is valid
+    if d>height(T) or d<0:
         return math.inf
+    #if you reach the end, the leftmost element is the minimum
     if d ==0 :
         return T.item[0]
     
+    #iterate
     return MinAtDepth(T.child[0],d-1)   
 
+#Return the maximum element in the tree at a given depth d
 def MaxAtDepth(T,d):
-    if d>height(T) :
+    #check that the depth is valid
+    if d>height(T) or d<0:
         return math.inf
+    #if you reach the end, the rightmost element is the maxuimum
     if d ==0 :
         return T.item[-1]
     
+    #iterate
     return MaxAtDepth(T.child[len(T.child)-1],d-1)
 
+#Return the number of nodes in the tree at a given depth d
 def NumNodesAtDepth(T,d):
-    if d>height(T): 
+    #check that the depth is valid
+    if d>height(T) or d<0: 
         return math.inf
+    #if you reach intended depth, add 1
     if d == 0 :
         return 1
+    #if not and you reached the end of the tree, add 0
     if T.isLeaf:
         return 0
     count = 0
     for i in range (len(T.child)):
+        #iterates
         count += NumNodesAtDepth(T.child[i],d-1)
     return count
-    
+
+#Print all the items in the tree at a given depth d
 def PrintAtDepthD(T,d):
+    #if you reach intended depth, print all items in the node
     if d == 0 :
         for j in range (len(T.item)):
             print(T.item[j], end=" ")
+    #iterates
     for i in range (len(T.child)):
         PrintAtDepthD(T.child[i],d-1)   
 
+#Return the number of nodes in the tree that are full.
 def FullNodes(T):
+    #if it is full, add 1
     if IsFull(T):
         return 1
+    #if you reach the end, add 0
     if T.isLeaf:
         return 0
     count = 0
     for i in range (len(T.child)):
+        #iterate
         count += FullNodes(T.child[i])
     return count
 
+#Return the number of leaves in the tree that are full
 def FullLeaves(T):
+    #if it is full and it is a leaf, add 1
     if IsFull(T) and T.isLeaf:
         return 1
+    #if you reach the end, add 0
     elif T.isLeaf:
         return 0
     count = 0
     for i in range (len(T.child)):
+        #add all full nodes
         count += FullNodes(T.child[i])
     return count
 
+#Given a key k, return the depth at which it is found in the tree, of -1 if k is not in the tree.
 def FindDepth(T,k):
+    #if you find the item, that depth is 0
     if k in T.item:
         return 0
-            
+    #if you reach the end without finding, return -1        
     if T.isLeaf:
         return -1
     
+    #find the child you should call and add
     d = FindDepth(T.child[FindChild(T,k)],k)
     
+    #if it did not fin it, return -1
     if d == -1:
         return -1
+    #if it is still going count the depth
     return d + 1
 
 
